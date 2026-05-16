@@ -26,6 +26,7 @@ const User = require("./models/user.js");
 const listingRoute = require("./routes/listing.js");
 const reviewsRoute = require("./routes/review.js");
 const userRoute = require("./routes/user.js");
+const { log } = require("console");
 
 app.use(methodOverride("_method"));
 
@@ -122,8 +123,11 @@ app.all(/.*/, (req, res, next) => {
 
 app.use((err, req, res, next) => {
     let { statusCode = 500, message = "something went wroung" } = err;
-    res.status(statusCode).render("error.ejs", { err });
+    res.status(statusCode);
     // res.send("something when wrong");
+    res.render("error.ejs", { err });
+    console.log(err);
+    
 })
 
 
