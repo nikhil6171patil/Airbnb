@@ -30,18 +30,19 @@ const { log } = require("console");
 
 app.use(methodOverride("_method"));
 
-// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-const dbUrl = process.env.ATLASDB_URL ;
+// const dbUrl = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL;            //atlasDB
 
 main()
     .then(() => { console.log("conneted to DB") })
     .catch((err) => { console.log(err) })
-    
+
 async function main() {
     await mongoose.connect(dbUrl);
 };
 
 // directries setup
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -59,20 +60,20 @@ const store = MongoStore.create({
 });
 
 store.on("error", () => {
-    console.log("Error in MONGO SESSION STORE",err);
-    
+    console.log("Error in MONGO SESSION STORE", err);
+
 });
 
 //define ssession  or asociate
 const sessionOptions = {
-    store ,
+    store,
     secret: process.env.SECREAT,
     resave: false,
     saveUninitialized: true,
     cookie: {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        maxAge : 7 * 24 * 60 * 60 * 1000,
-        httpOnly : true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
     },
 };
 
@@ -121,14 +122,13 @@ app.all(/.*/, (req, res, next) => {
     next(new ExpressError(404, "Page Not Found!"));
 });
 
+ 
 app.use((err, req, res, next) => {
-    let { statusCode = 500, message = "something went wroung" } = err;
-    res.status(statusCode);
-    // res.send("something when wrong");
-    res.render("error.ejs", { err });
-    console.log(err);
+    let { statusCode = 500, message = "Something went wrong" } = err;
     
-})
+    res.status(statusCode).render("error", { err });
+    console.log(err);
+});
 
 
 app.listen(port, () => {
